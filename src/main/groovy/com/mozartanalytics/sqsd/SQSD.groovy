@@ -76,26 +76,26 @@ final class SQSD implements Runnable {
                 log.info("Received Messages [{}]", messages.size())
 
                 // Break when empty if not running daemonized
-                if (messages.size() <= 0) {
+                if (messages.isEmpty()) {
                     if (!runDaemonized) {
                         break
                     } else if (sleepSeconds) {
                         // don't want to hammer implementations that don't implement long-polling
                         SECONDS.sleep(sleepSeconds)
                     }
-                }
-
-                for (Message message : messages) {
-                    // TODO: Make async.
-                    if (handleMessage(message)) {
-                        // If successful, delete the message
-                        log.info("Deleting message...")
-                        sqs.deleteMessage(new DeleteMessageRequest(sqsQueueUrl, message.receiptHandle))
-                    } else {
-                        // TODO we might validate that the long polling timeout is considerably longer than the visibility timeout,
-                        // if true then we could skip the exception. Still this is a dangerous alternative.
-                        throw new Exception("Local Service Failure. Message ID [{}]", message.messageId)
-                        // We should stop consuming here
+                } else {
+                    for (Message message : messages) {
+                        // TODO: Make async.
+                        if (handleMessage(message)) {
+                            // If successful, delete the message
+                            log.info("Deleting message...")
+                            sqs.deleteMessage(new DeleteMessageRequest(sqsQueueUrl, message.receiptHandle))
+                        } else {
+                            // TODO we might validate that the long polling timeout is considerably longer than the visibility timeout,
+                            // if true then we could skip the exception. Still this is a dangerous alternative.
+                            throw new Exception("Local Service Failure. Message ID [{}]", message.messageId)
+                            // We should stop consuming here
+                        }
                     }
                 }
 
