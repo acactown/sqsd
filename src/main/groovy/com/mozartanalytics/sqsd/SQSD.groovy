@@ -3,6 +3,7 @@ package com.mozartanalytics.sqsd
 import com.amazonaws.AmazonClientException
 import com.amazonaws.AmazonServiceException
 import com.amazonaws.auth.BasicAWSCredentials
+import com.amazonaws.regions.RegionUtils
 import com.amazonaws.services.sqs.AmazonSQS
 import com.amazonaws.services.sqs.AmazonSQSClient
 import com.amazonaws.services.sqs.model.DeleteMessageRequest
@@ -14,7 +15,6 @@ import groovy.util.logging.Slf4j
 import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
 
-import static com.amazonaws.regions.RegionUtils.*
 import static com.google.common.base.Preconditions.*
 import static java.util.concurrent.TimeUnit.*
 
@@ -77,7 +77,7 @@ final class SQSD implements Runnable {
 
                 // Break when empty if not running daemonized
                 if (messages.size() <= 0) {
-                    if (runDaemonized) {
+                    if (!runDaemonized) {
                         break
                     } else if (sleepSeconds) {
                         // don't want to hammer implementations that don't implement long-polling
@@ -123,11 +123,11 @@ final class SQSD implements Runnable {
         } catch (HttpResponseException ex) {
             status = ex.response.status
 
-            log.error(ex)
+            log.error("Worker response error!", ex)
         } catch (ConnectException ex) {
             status = 500
 
-            log.error(ex)
+            log.error("Connection with worker error!", ex)
         }
 
         log.info("POST [{}]::[{}]", "${workerHTTPHost}${workerHTTPPath}", status)
@@ -143,7 +143,7 @@ final class SQSD implements Runnable {
                 config.aws.access_key_id as String,
                 config.aws.secret_access_key as String
         ))
-        sqs.region = getRegion(config.sqsd.queue.region_name as String)
+        sqs.region = RegionUtils.getRegion(config.sqsd.queue.region_name as String)
 
         // Use provided queue url or name (url has priority)
         sqsQueueUrl = config.sqsd.queue.url ?: sqs.getQueueUrl(config.sqsd.queue.name as String).getQueueUrl()

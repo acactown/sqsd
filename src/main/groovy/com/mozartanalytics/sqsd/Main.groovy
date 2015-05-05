@@ -1,7 +1,5 @@
 package com.mozartanalytics.sqsd
 
-import groovy.util.logging.Slf4j
-
 import static com.google.common.base.Preconditions.*
 import static com.google.common.base.Strings.*
 import static com.google.common.io.Resources.*
@@ -16,7 +14,6 @@ import static com.google.common.io.Resources.*
  * @author <a href="mailto:ortiz.manuel@mozartanalytics.com">Manuel Ortiz</a>
  * @author <a href="mailto:acactown@gmail.com">Andrés Amado</a>
  */
-@Slf4j
 final class Main {
 
     private static final String DEFAULT_CONFIG_FILE_LOCATION = "sqsd-default-config.groovy"
