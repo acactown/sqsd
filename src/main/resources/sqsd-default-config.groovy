@@ -8,13 +8,21 @@
  */
 
 /**
- * AWS SQS  related configuration env-vars
+ * AWS SQS required related configuration env-vars
  */
 aws.access_key_id = System.getenv("AWS_ACCESS_KEY_ID")
 aws.secret_access_key = System.getenv("AWS_SECRET_ACCESS_KEY")
 sqsd.queue.name = System.getenv("SQSD_QUEUE_NAME")
 sqsd.queue.url = System.getenv("SQSD_QUEUE_URL")
+
+/**
+ * AWS SQS optional related configuration env-vars
+ */
 sqsd.queue.region_name = System.getenv("SQS_QUEUE_REGION_NAME") ?: "us-east-1"
+
+/**
+ * SQSD related configuration env-vars
+ */
 sqsd.max_messages_per_request = System.getenv("SQSD_MAX_MESSAGES_PER_REQUEST") as Integer ?: 10 // range: 1-10
 sqsd.run_daemonized = System.getenv("SQSD_RUN_DAEMONIZED") as Integer ?: 0 // 0 or 1
 sqsd.sleep_seconds = System.getenv("SQSD_SLEEP_SECONDS") as Integer ?: 0
@@ -30,4 +38,4 @@ sqsd.worker.http.request.content_type = System.getenv("SQSD_WORKER_HTTP_REQUEST_
 /**
  * Misc configuration env-vars
  */
-sqsd.config_file = System.getenv("SQSD_CONFIG_FILE") ?: "config/sqsd-config.groovy"
+sqsd.config_file = System.getenv("SQSD_CONFIG_FILE") ?: "sqsd-config.groovy"
