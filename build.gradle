@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 apply plugin: 'groovy'
 apply plugin: 'application'
 
@@ -46,4 +48,21 @@ run {
     environment 'SQSD_QUEUE_NAME', 'change-me!'
 
     environment 'SQSD_CONFIG_FILE', '/optional/absolute/path/to/your/config/file'
+}
+
+distZip.dependsOn(clean)
+
+task createDockerfile(type: Copy, dependsOn: [distZip]) {
+    from "${project.projectDir}"
+    into "${project.buildDir}"
+    include('Dockerfile.template')
+    rename ('Dockerfile.template', 'Dockerfile')
+    filter(ReplaceTokens, tokens: [
+            SQSD_VERSION: version
+    ])
+}
+
+task buildDocker(type:Exec, dependsOn: [createDockerfile]) {
+    workingDir "${project.buildDir}"
+    commandLine "docker", "build", "--tag='mozartanalytics/sqsd:${version}'", "."
 }

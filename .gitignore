@@ -19,6 +19,7 @@
 *Db.properties
 *Db.script
 stacktrace.log
+Dockerfile
 /*.zip
 /plugin.xml
 /*.log
