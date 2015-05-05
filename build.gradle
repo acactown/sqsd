@@ -56,6 +56,7 @@ task createDockerfile(type: Copy, dependsOn: [distZip]) {
     from "${project.projectDir}"
     into "${project.buildDir}"
     include('Dockerfile.template')
+    include('logback.xml')
     rename ('Dockerfile.template', 'Dockerfile')
     filter(ReplaceTokens, tokens: [
             SQSD_VERSION: version

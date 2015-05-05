@@ -9,5 +9,11 @@ RUN unzip /tmp/sqsd-@SQSD_VERSION@.zip -d /opt \
     && ln -s /opt/sqsd-@SQSD_VERSION@/bin/sqsd /usr/bin/sqsd \
     && rm -f /tmp/sqsd-@SQSD_VERSION@.zip
 
+# Copy default logback config
+ADD ./logback.xml /opt/sqsd-@SQSD_VERSION@/
+
+# Set logback config file and JDK params, feel free to change :)
+ENV SQSD_OPTS -server -Dfile.encoding=UTF-8 -Dlogback.configurationFile=/opt/sqsd-@SQSD_VERSION@/logback.xml -Xms512m -Xmx1g -Xss256k -XX:PermSize=128m -XX:MaxPermSize=256m
+
 # Run sqsd
 ENTRYPOINT ["sqsd"]
